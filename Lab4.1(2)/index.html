@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lottery Ball Game</title>
+</head>
+<body>
+    <script>
+        // 1. Define the Lottery Ball Blueprint
+        function LotteryBall() {
+            this.color = Math.random() < 0.5 ? "red" : "white";
+            this.points = Math.floor(Math.random() * 101); // 0 to 100
+        }
+
+        // 2. Create an array of 100 random ball objects
+        let boxOfBalls = [];
+        for (let i = 0; i < 100; i++) {
+            boxOfBalls.push(new LotteryBall());
+        }
+
+        // Game State Variables
+        let totalScore = 0;
+        let drawnIndices = new Set(); // To keep track of already drawn balls
+        let gameOver = false;
+
+        alert("Welcome to the Lottery! Draw white balls to gain points. If you hit a red ball, the game ends and those points are deducted.");
+
+        // 3. Main Game Loop
+        while (!gameOver) {
+            let input = prompt(`Enter a ball index (0-99) to draw. Current Score: ${totalScore}\nType 'quit' to stop.`);
+
+            // Check if user wants to quit
+            if (input === null || input.toLowerCase() === 'quit') {
+                alert("You decided to walk away.");
+                gameOver = true;
+                break;
+            }
+
+            let index = parseInt(input);
+
+            // Validation: Check if it's a valid number, within range, and not already drawn
+            if (isNaN(index) || index < 0 || index > 99) {
+                alert("Invalid input. Please enter a number between 0 and 99.");
+                continue;
+            }
+
+            if (drawnIndices.has(index)) {
+                alert("You already drew ball #" + index + "! Pick a different one.");
+                continue;
+            }
+
+            // 4. Process the draw
+            let selectedBall = boxOfBalls[index];
+            drawnIndices.add(index); // Mark as drawn
+
+            alert(`Ball #${index} is ${selectedBall.color.toUpperCase()} and worth ${selectedBall.points} points.`);
+
+            if (selectedBall.color === "red") {
+                totalScore -= selectedBall.points;
+                alert("OH NO! A red ball! Game Over.");
+                gameOver = true;
+            } else {
+                totalScore += selectedBall.points;
+                alert("Safe! Added to your score.");
+            }
+        }
+
+        // 5. Final Score
+        alert(`Final Score: ${totalScore}\nThanks for playing!`);
+        document.body.innerHTML = `<h1>Game Over</h1><p>Your final score was: ${totalScore}</p>`;
+
+    </script>
+</body>
+</html>

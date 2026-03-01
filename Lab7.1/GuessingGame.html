@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Persistent Guessing Game</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f4f4f9; }
+        #game-card { background: white; padding: 2rem; border-radius: 8px; shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; width: 300px; border: 1px solid #ddd; }
+        input { width: 50px; padding: 5px; margin-bottom: 10px; }
+        .stats { color: #555; font-size: 0.9rem; margin-top: 10px; }
+        .status-msg { font-weight: bold; color: #007bff; margin: 15px 0; min-height: 1.2em; }
+    </style>
+</head>
+<body>
+
+<div id="game-card">
+    <h2>Guessing Game</h2>
+    <p>Range: 1 - 100</p>
+    
+    <form id="guess-form">
+        <input type="number" id="user-guess" required min="1" max="100">
+        <br>
+        <button type="submit">Submit Guess</button>
+    </form>
+
+    <div id="message" class="status-msg">Welcome back!</div>
+    <div id="stats" class="stats">Guesses: 0 / 10</div>
+    <button id="reset-btn" style="margin-top: 20px; font-size: 0.7rem;">Manual Reset</button>
+</div>
+
+<script>
+    class GuessingGame {
+        constructor(max = 100, existingData = null) {
+            if (existingData) {
+                // Resume from saved data
+                this.secretNumber = existingData.secretNumber;
+                this.guessesMade = existingData.guessesMade;
+            } else {
+                // Start fresh
+                this.secretNumber = Math.floor(Math.random() * max + 1);
+                this.guessesMade = 0;
+            }
+            this.maxGuesses = 10;
+        }
+
+        guess(num) {
+            this.guessesMade++;
+            this.saveToStorage(); // Save state after every guess
+            
+            if (num === this.secretNumber) return "CORRECT";
+            if (num > this.secretNumber) return "TOO_HIGH";
+            return "TOO_LOW";
+        }
+
+        saveToStorage() {
+            // Save the object as a JSON string
+            localStorage.setItem('savedGame', JSON.stringify(this));
+        }
+
+        static loadFromStorage() {
+            const data = localStorage.getItem('savedGame');
+            return data ? new GuessingGame(100, JSON.parse(data)) : new GuessingGame();
+        }
+
+        static clearStorage() {
+            localStorage.removeItem('savedGame');
+        }
+    }
+
+    // --- App Initialization ---
+    let game = GuessingGame.loadFromStorage();
+    
+    const form = document.getElementById('guess-form');
+    const messageDisplay = document.getElementById('message');
+    const statsDisplay = document.getElementById('stats');
+    const input = document.getElementById('user-guess');
+
+    // Update UI immediately on load to show progress
+    const refreshUI = (msg = "Keep guessing...") => {
+        statsDisplay.textContent = `Guesses: ${game.guessesMade} / 10`;
+        messageDisplay.textContent = msg;
+    };
+
+    refreshUI(game.guessesMade > 0 ? "Resumed your game!" : "Start guessing!");
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const userNum = parseInt(input.value);
+        const result = game.guess(userNum);
+        
+        if (result === "CORRECT") {
+            alert(`🎉 You got it! It was ${game.secretNumber}.`);
+            GuessingGame.clearStorage();
+            game = new GuessingGame();
+            refreshUI("New game started!");
+        } else if (game.guessesMade >= game.maxGuesses) {
+            alert(`Game Over. The number was ${game.secretNumber}.`);
+            GuessingGame.clearStorage();
+            game = new GuessingGame();
+            refreshUI("Try again with a new number!");
+        } else {
+            const feedback = result === "TOO_HIGH" ? "Too high!" : "Too low!";
+            refreshUI(feedback);
+        }
+
+        input.value = "";
+        input.focus();
+    });
+
+    // Manual reset button
+    document.getElementById('reset-btn').addEventListener('click', () => {
+        GuessingGame.clearStorage();
+        location.reload(); 
+    });
+</script>
+
+</body>
+</html>

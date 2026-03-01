@@ -1,0 +1,71 @@
+<!doctype html>
+<!--
+TODO: This is a comment. Change this header comment to describe the 
+web page and include your name as author.
+-->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Roshan Azeemi | Portfolio</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+<div id="container">
+    <div id="header">
+        <h1>About</h1>
+    </div>
+
+    <div id="nav">
+        <a class="navlink" href="index.html">Home</a>
+        <a class="navlink" href="about.html">About</a>
+        <a class="navlink" href="work.html">Work</a>
+        <a class="navlink" href="journal.html">Journal</a>
+    </div>
+
+    <script>
+        // Wrap the entire logic in a loop so the user can play multiple rounds
+let playAgain = true;
+
+while (playAgain) {
+    // 1. Generate two random integers between -100 and 100
+    let num1 = Math.floor(Math.random() * 201) - 100;
+    let num2 = Math.floor(Math.random() * 201) - 100;
+    
+    // Calculate the correct answer
+    let correctAnswer = num1 + num2;
+    let userAnswer;
+
+    // 2. Keep asking the question until they get it right
+    do {
+        userAnswer = prompt(`What is ${num1} + ${num2}?`);
+        
+        // Convert input to a number for comparison
+        if (Number(userAnswer) === correctAnswer) {
+            alert("Correct! Well done.");
+        } else {
+            alert("Not quite. Try again!");
+        }
+        
+    } while (Number(userAnswer) !== correctAnswer);
+
+    // 3. Ask if they want to go again
+    playAgain = confirm("Would you like another question?");
+}
+
+// 4. Final goodbye message
+document.body.innerHTML = "<h1>Thanks for playing! Goodbye.</h1>";
+    </script>
+
+    <div id="content">
+        <div class="tile">
+            <h2>text<h2>
+        </div>
+    </div>
+
+    <div id="footer">
+        &copy; 2026 Roshan Azeemi, McMaster University
+    </div>
+</body>
+</html>

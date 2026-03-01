@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>500 Balls Animation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <script>
+        class Ball {
+            constructor(x, y, xSpeed, ySpeed) {
+                this.x = x;
+                this.y = y;
+                this.xSpeed = xSpeed;
+                this.ySpeed = ySpeed;
+                this.radius = 5;
+                // Randomize colors during construction
+                this.red = Math.floor(Math.random() * 256);
+                this.green = Math.floor(Math.random() * 256);
+                this.blue = Math.floor(Math.random() * 256);
+            }
+
+            moveOneStep() {
+                this.x += this.xSpeed;
+                this.y += this.ySpeed;
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = `rgb(${this.red}, ${this.green}, ${this.blue})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+
+        window.addEventListener("load", function (event) {
+            const c = document.getElementById("animationCanvas");
+            const ctx = c.getContext("2d");
+            
+            // 1. Create an array to hold the balls
+            const balls = [];
+            const numBalls = 500;
+
+            // 2. Use a loop to populate the array with random values
+            for (let i = 0; i < numBalls; i++) {
+                let randomX = Math.random() * c.width;
+                let randomY = Math.random() * c.height;
+                // Speeds between -2 and 2
+                let randomXSpeed = (Math.random() - 0.5) * 4; 
+                let randomYSpeed = (Math.random() - 0.5) * 4;
+
+                balls.push(new Ball(randomX, randomY, randomXSpeed, randomYSpeed));
+            }
+
+            let timerId;
+
+            function startAnimation() {
+                timerId = setInterval(updateAnimation, 16);
+            }
+
+            function stopAnimation() {
+                clearTimeout(timerId);
+            }
+
+            function updateAnimation() {
+                // Clear the canvas once per frame
+                ctx.clearRect(0, 0, c.width, c.height);
+
+                // 3. Use a loop to update and draw every ball
+                balls.forEach(ball => {
+                    ball.moveOneStep();
+                    ball.draw(ctx);
+                });
+            }
+
+            startAnimation();
+        });
+    </script>
+</head>
+<body style='text-align:center; background-color: #222;'>
+    <canvas id='animationCanvas' width='768' height='400' style='background-color:black; border: 2px solid #555;'></canvas>
+</body>
+</html>
