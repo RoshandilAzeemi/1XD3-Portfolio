@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!--
+Example Canvas Animation
+-->
+<html>
+
+<head>
+    <title>Example Canvas Animation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <script type='text/javascript'>
+
+    window.addEventListener("load", function (event) {
+    const c = document.getElementById("animationCanvas");
+    const ctx = c.getContext("2d");
+
+    // starting at top-left, small radius, and black color
+    const ball = {
+        x: 50, y: 50,
+        xSpeed: 2, ySpeed: 1, // Moves down and to the right
+        red: 0, green: 0, blue: 0, // Starts as black
+        radius: 40 // Starting larger so we can see it shrink
+    };
+    
+    let timerId;
+
+    function startAnimation() {
+        timerId = setInterval(updateAnimation, 16);
+    }
+
+    function stopAnimation() {
+        clearInterval(timerId);
+    }
+
+    function updateAnimation() {
+        // ball moves down (+y) and right (+x)
+        ball.x += ball.xSpeed;
+        ball.y += ball.ySpeed;
+
+        // decreased radius over time
+        if (ball.radius > 1) {
+            ball.radius -= 0.1; 
+        }
+
+        // increase red value toward 255
+        if (ball.red < 255) {
+            ball.red += 1; 
+        }
+
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        // applying the dynamic red value
+        ctx.fillStyle = "rgb(" + Math.floor(ball.red) + ", 0, 0)";
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // collision detection to stop at boundaries
+        if (ball.x >= c.width - ball.radius || ball.y >= c.height - ball.radius) {
+            stopAnimation();
+        }
+    }
+
+    startAnimation();
+});
+    </script>
+</head>
+
+<body style='text-align:center;'>
+    <canvas id='animationCanvas' width='768' height='400' style='background-color:black;'></canvas>
+</body>
+
+</html>
