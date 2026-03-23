@@ -1,0 +1,22 @@
+SELECT:
+1. SELECT * FROM orderdetails;
+2. SELECT * FROM orderdetails WHERE OrderID = 10281;
+3. SELECT ProductID FROM orderdetails WHERE Quantity > 90 ORDER BY Quantity DESC;
+4. SELECT ProductID FROM orderdetails ORDER BY Quantity DESC LIMIT 1;
+
+INSERT: 
+1. INSERT INTO employees (LastName, FirstName, BirthDate, Notes) 
+   VALUES ('Smith', 'Amy', '1969-11-02', 'B.A. in Basket Weaving from University of South Southwestern Ontario');
+2. SELECT * FROM employees WHERE FirstName = 'Amy' AND LastName = 'Smith';
+
+UPDATE: 
+1. SELECT SupplierID FROM suppliers WHERE SupplierName = 'Bigfoot Breweries';
+2. UPDATE suppliers SET ContactName = 'Mary Shelley', Phone = '(503) 555-4242' WHERE SupplierID = 16;
+3. SELECT SupplierID, SupplierName, ContactName, Phone FROM suppliers WHERE SupplierID = 16;
+4. UPDATE orderdetails SET Quantity = Quantity + 10;
+5. UPDATE products SET Price = Price * 0.5 WHERE Price > 10;
+
+DELETE: 
+1. SELECT * FROM products WHERE Price <= 10; 
+2. DELETE FROM products WHERE Price <= 10;
+3. SELECT * FROM products ORDER BY Price ASC;
