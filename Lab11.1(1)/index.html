@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Password Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        
+        #password-field {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            outline: none;
+            transition: background-color 0.3s, border-color 0.3s;
+            width: 250px;
+        }
+
+        /* Feedback Colors */
+        .invalid { background-color: #ffcccc; border-color: #ff0000 !important; }
+        .valid { background-color: #ccffcc; border-color: #008000 !important; }
+
+        /* Loading Feedback Style */
+        #loader {
+            display: none;
+            margin-left: 10px;
+            color: #555;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Constraint Style */
+        input:disabled {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Secure Password Check</h2>
+    <p>Password must be 6+ chars, include uppercase, lowercase, digits, and symbols.</p>
+
+    <div style="display: flex; align-items: center;">
+        <input type="password" id="password-field" placeholder="Enter password...">
+        <span id="loader">Checking...</span>
+    </div>
+
+    <script>
+        const passwordInput = document.getElementById('password-field');
+        const loader = document.getElementById('loader');
+
+        // Using 'change' event so the check happens when the user finishes typing/tabs out
+        passwordInput.addEventListener('change', function() {
+            const password = this.value;
+
+            if (password.length === 0) {
+                this.className = '';
+                return;
+            }
+
+            // 1. ADD CONSTRAINTS & FEEDBACK
+            passwordInput.disabled = true;    // Constraint: Prevent typing
+            loader.style.display = 'inline'; // Feedback: Show loading text
+
+            // Launch AJAX request
+            fetch('check_password.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'password=' + encodeURIComponent(password)
+            })
+            .then(response => response.text())
+            .then(data => {
+                // 2. REMOVE CONSTRAINTS & FEEDBACK
+                passwordInput.disabled = false;
+                loader.style.display = 'none';
+                passwordInput.focus(); // Return cursor focus to input
+
+                // Update UI based on response code
+                if (data.trim() === 'VALID') {
+                    passwordInput.className = 'valid';
+                } else {
+                    passwordInput.className = 'invalid';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Ensure field is re-enabled even if request fails
+                passwordInput.disabled = false;
+                loader.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

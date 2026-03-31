@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>City Population Lookup</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .form-group { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Find Cities by Population</h2>
+    
+    <form id="popForm">
+        <div class="form-group">
+            <label>Minimum Population:</label>
+            <input type="number" id="min" name="min" value="100000" required>
+        </div>
+        <div class="form-group">
+            <label>Maximum Population:</label>
+            <input type="number" id="max" name="max" value="500000" required>
+        </div>
+        <button type="submit">Search Cities</button>
+    </form>
+
+    <div id="results">
+        </div>
+
+    <script>
+        document.getElementById('popForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Stop page refresh
+
+            const min = document.getElementById('min').value;
+            const max = document.getElementById('max').value;
+            const resultsDiv = document.getElementById('results');
+
+            // Launch AJAX request
+            fetch(`get_cities.php?min=${min}&max=${max}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        resultsDiv.innerHTML = "<p>No cities found in this range.</p>";
+                        return;
+                    }
+
+                    // Build table
+                    let html = '<table><thead><tr><th>City</th><th>District</th><th>Population</th></tr></thead><tbody>';
+                    
+                    data.forEach(city => {
+                        html += `<tr>
+                                    <td>${city.Name}</td>
+                                    <td>${city.District}</td>
+                                    <td>${city.Population.toLocaleString()}</td>
+                                 </tr>`;
+                    });
+
+                    html += '</tbody></table>';
+                    resultsDiv.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultsDiv.innerHTML = "<p>Error loading data.</p>";
+                });
+        });
+    </script>
+</body>
+</html>
